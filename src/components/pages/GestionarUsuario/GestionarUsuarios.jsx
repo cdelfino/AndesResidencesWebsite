@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getUsers, deleteUser } from "../../../api/jsonbinApi"; 
 import { Rings } from "react-loader-spinner";
 
-const GestionarUsuarios = () => {
+const GestionarUsuarios = ({userRole}) => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +40,21 @@ const GestionarUsuarios = () => {
       alert("Hubo un error al intentar eliminar el usuario.");
     }
   };
+
+
+  if (userRole !== "admin") {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="bg-red-600 text-white p-6 rounded-md">
+          <h2 className="text-xl font-semibold">No estás autorizado</h2>
+          <p className="mt-2">
+            Tu rol no tiene permisos para acceder a esta página.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
 
   if (loading) {
     return (

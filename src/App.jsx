@@ -8,7 +8,7 @@ import { Footer } from "./components/layout/Footer/Footer";
 import "./App.css";
 import AgendarRecorrido from "./components/pages/AgendarRecorrido/AgendarRecorrido";
 import PropertyDetail from "./components/pages/PropertyDetail/PropertyDetail";
-import { fetchData, getProperties } from "./api/jsonbinApi";
+import { getProperties } from "./api/jsonbinApi";
 import MisReservas from "./components/pages/MisReservas/MisReservas";
 import GestionarUsuarios from "./components/pages/GestionarUsuario/GestionarUsuarios";
 import GestionarReservas from "./components/pages/GestionarReservas/GestionarReservas";
@@ -74,11 +74,15 @@ const App = () => {
             />
             <Route
               path="/gestionarUsuarios"
-              element={<GestionarUsuarios userId={user?.id} />}
+              element={
+                <GestionarUsuarios userId={user?.id} userRole={user?.role} />
+              }
             />
             <Route
               path="/gestionarReservas"
-              element={<GestionarReservas userId={user?.id} />}
+              element={
+                <GestionarReservas userId={user?.id} userRole={user?.role} />
+              }
             />
           </Routes>
         </div>
