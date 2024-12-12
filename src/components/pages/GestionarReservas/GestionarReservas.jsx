@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getAppointments, deleteAppointment } from "../../../api/jsonbinApi";
 import { Rings } from "react-loader-spinner";
 
-const GestionarReservas = ({userRole}) => {
+const GestionarReservas = ({ userRole }) => {
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -98,12 +98,19 @@ const GestionarReservas = ({userRole}) => {
                 {reserva.message}
               </p>
             </div>
-            <button
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-              onClick={() => handleDelete(reserva.id)}
-            >
-              Eliminar
-            </button>
+            <div className="flex gap-3">
+              <button
+                className="bg-[#075985] text-white px-4 py-2 rounded hover:bg-red-700"
+              >
+                Editar reserva
+              </button>
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                onClick={() => handleDelete(reserva.id)}
+              >
+                Eliminar
+              </button>
+            </div>
           </li>
         ))}
       </ul>

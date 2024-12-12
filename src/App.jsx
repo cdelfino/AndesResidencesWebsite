@@ -12,6 +12,7 @@ import { getProperties } from "./api/jsonbinApi";
 import MisReservas from "./components/pages/MisReservas/MisReservas";
 import GestionarUsuarios from "./components/pages/GestionarUsuario/GestionarUsuarios";
 import GestionarReservas from "./components/pages/GestionarReservas/GestionarReservas";
+import PublicarPropiedad from "./components/pages/PublicarPropiedad/PublicarPropiedad";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -82,6 +83,12 @@ const App = () => {
               path="/gestionarReservas"
               element={
                 <GestionarReservas userId={user?.id} userRole={user?.role} />
+              }
+            />
+            <Route
+              path="/publicarPropiedad"
+              element={
+                <PublicarPropiedad userId={user?.id} userRole={user?.role} />
               }
             />
           </Routes>

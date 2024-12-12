@@ -1,5 +1,5 @@
 import React from "react";
-import { BedDouble, Bath, Expand, MapPin, DollarSign } from "lucide-react";
+import { BedDouble, Bath, MapPin, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const PropertyCard = ({ property }) => {

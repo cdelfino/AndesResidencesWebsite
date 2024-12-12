@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getAppointments, deleteAppointment } from "../../../api/jsonbinApi"; 
+import { getAppointments, deleteAppointment } from "../../../api/jsonbinApi";
 import { Rings } from "react-loader-spinner";
 
 const MisReservas = ({ userId }) => {
@@ -36,8 +36,8 @@ const MisReservas = ({ userId }) => {
     if (!confirmDelete) return;
 
     try {
-      await deleteAppointment(id); 
-      setReservas((prevReservas) => prevReservas.filter((r) => r.id !== id)); 
+      await deleteAppointment(id);
+      setReservas((prevReservas) => prevReservas.filter((r) => r.id !== id));
     } catch (error) {
       console.error("Error al eliminar la reserva:", error);
       alert("Hubo un error al intentar eliminar la reserva.");
@@ -96,12 +96,18 @@ const MisReservas = ({ userId }) => {
                 {reserva.message || "Sin mensaje adicional"}
               </p>
             </div>
-            <button
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-              onClick={() => handleDelete(reserva.id)}
-            >
-              Eliminar
-            </button>
+            <div className="flex gap-3">
+              <button
+                className="bg-[#075985] text-white px-4 py-2 rounded hover:bg-red-700"
+              >
+                Editar reserva
+              </button>
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                onClick={() => handleDelete(reserva.id)}
+              >
+                Eliminar
+              </button></div>
           </li>
         ))}
       </ul>
