@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { getUsers, deleteUser } from "../../../api/jsonbinApi"; 
 import { Rings } from "react-loader-spinner";
+import axios from "axios";
 
-const GestionarUsuarios = ({userRole}) => {
+const GestionarUsuarios = ({ userRole }) => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const data = await getUsers();
-
-        if (!data || !Array.isArray(data)) {
+        const response = await axios.get("http://localhost:5000/api/users");
+        if (!response.data || !Array.isArray(response.data)) {
           throw new Error("El formato del bin no es válido.");
         }
 
-        setUsuarios(data);
+        setUsuarios(response.data);
       } catch (error) {
         console.error("Error al cargar los usuarios:", error);
       } finally {
@@ -33,14 +32,13 @@ const GestionarUsuarios = ({userRole}) => {
     if (!confirmDelete) return;
 
     try {
-      await deleteUser(id); 
+      await axios.post(`http://localhost:5000/api/delete-user/${id}`);
       setUsuarios((prevUsuarios) => prevUsuarios.filter((u) => u.id !== id));
     } catch (error) {
       console.error("Error al eliminar el usuario:", error);
       alert("Hubo un error al intentar eliminar el usuario.");
     }
   };
-
 
   if (userRole !== "admin") {
     return (
@@ -54,7 +52,6 @@ const GestionarUsuarios = ({userRole}) => {
       </div>
     );
   }
-
 
   if (loading) {
     return (
@@ -83,7 +80,6 @@ const GestionarUsuarios = ({userRole}) => {
             className="border border-gray-300 rounded-md p-4 shadow-sm flex justify-between items-center"
           >
             <div>
-       
               <p>
                 <span className="font-semibold">Correo:</span> {usuario.email}
               </p>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { getProperties } from "../../../api/jsonbinApi";
 import { Rings } from "react-loader-spinner";
 import PropertyCard from "../PropertyCard/PropertyCard";
 
@@ -11,8 +10,12 @@ const PropertyList = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const data = await getProperties();
-        setProperties(data.properties);
+        const response = await fetch("http://localhost:5000/api/propiedades");
+        if (!response.ok) {
+          throw new Error("Error al obtener las propiedades");
+        }
+        const data = await response.json();
+        setProperties(data);
         setLoading(false);
       } catch (err) {
         setError("Error al cargar las propiedades");

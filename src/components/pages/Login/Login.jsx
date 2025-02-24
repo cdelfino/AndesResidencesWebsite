@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { getUsers } from "../../../api/jsonbinApi";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const Login = ({ onLogin }) => {
   const [error, setError] = useState("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -23,20 +22,28 @@ const Login = ({ onLogin }) => {
     }),
     onSubmit: async (values) => {
       try {
-        const users = await getUsers();
+        const response = await fetch("http://localhost:5000/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password,
+          }),
+        });
 
-        const user = users.find(
-          (u) => u.email === values.email && u.password === values.password
-        );
+        const data = await response.json();
 
-        if (user) {
-          onLogin(user); 
+        if (response.ok) {
+          localStorage.setItem("token", data.token);
+          console.log(data);
+          await onLogin(data);
           navigate("/");
         } else {
-          setError("Credenciales incorrectas");
+          setError(data.error || "Error al autenticar");
         }
       } catch (error) {
-        console.error("Error al obtener los usuarios:", error);
         setError("Error al autenticar");
       }
     },

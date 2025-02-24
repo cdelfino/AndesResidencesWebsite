@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { getUsers, updateUsers } from "../../../api/jsonbinApi";
-import { v4 as uuidv4 } from "uuid";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -12,7 +11,7 @@ const validationSchema = Yup.object({
     .min(6, "La contraseña debe tener al menos 6 caracteres")
     .required("La contraseña es obligatoria"),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Las contraseñas no coinciden") 
+    .oneOf([Yup.ref("password"), null], "Las contraseñas no coinciden")
     .required("Debes confirmar la contraseña"),
   role: Yup.string()
     .oneOf(["cliente", "agente"], "Selecciona un rol válido")
@@ -25,29 +24,16 @@ const Register = () => {
 
   const handleRegister = async (values) => {
     try {
-      const users = await getUsers();
-      const existingUser = users.find((u) => u.email === values.email);
-
-      if (existingUser) {
-        setError("El email ya está registrado.");
-        return;
-      }
-
-      const newUser = {
-        id: uuidv4(),
+      const response = await axios.post("http://localhost:5000/api/register", {
         email: values.email,
         password: values.password,
         role: values.role,
-      };
+      });
 
-      const updatedUsers = [...users, newUser];
-      await updateUsers(updatedUsers);
-
-      setMessage("Usuario registrado con éxito.");
+      setMessage(response.data.message);
       setError("");
     } catch (err) {
-      console.error("Error al registrar usuario:", err);
-      setError("Error al registrar el usuario.");
+      setError("Error al registrar usuario");
     }
   };
 
@@ -68,7 +54,7 @@ const Register = () => {
             role: "cliente",
           }}
           validationSchema={validationSchema}
-          onSubmit={handleRegister}
+          onSubmit={handleRegister} // Ahora pasamos la función handleRegister directamente
         >
           <Form className="mt-8 space-y-6">
             <div className="rounded-md shadow-sm -space-y-px">

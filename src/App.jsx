@@ -8,10 +8,10 @@ import { Footer } from "./components/layout/Footer/Footer";
 import "./App.css";
 import AgendarRecorrido from "./components/pages/AgendarRecorrido/AgendarRecorrido";
 import PropertyDetail from "./components/pages/PropertyDetail/PropertyDetail";
-import { getProperties } from "./api/jsonbinApi";
 import MisReservas from "./components/pages/MisReservas/MisReservas";
 import GestionarUsuarios from "./components/pages/GestionarUsuario/GestionarUsuarios";
 import GestionarReservas from "./components/pages/GestionarReservas/GestionarReservas";
+import axios from "axios";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -21,26 +21,44 @@ const App = () => {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
+    console.log(storedUser);
     if (storedUser) {
-      setUser(storedUser);
+      axios
+        .get("http://localhost:5000/api/token", {
+          headers: {
+            Authorization: `Bearer ${storedUser.token}`,
+          },
+        })
+        .then((response) => {
+          setUser(response.data);
+        });
     }
   }, []);
 
-  const handleLogin = (user) => {
+  const handleLogin = async (user) => {
     localStorage.setItem("user", JSON.stringify(user));
-    setUser(user);
+    const response = await axios.get("http://localhost:5000/api/token", {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+    console.log(response.data);
+    setUser(response.data);
   };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUser(null);
   };
-
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const data = await getProperties();
-        setProperties(data.properties);
+        const response = await fetch("http://localhost:5000/api/propiedades");
+        if (!response.ok) {
+          throw new Error("Error al obtener las propiedades");
+        }
+        const data = await response.json();
+        setProperties(data);
         setLoading(false);
       } catch (err) {
         setError("Error al cargar las propiedades");

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { getAppointments, deleteAppointment } from "../../../api/jsonbinApi"; 
+import { deleteAppointment } from "../../../api/jsonbinApi";
 import { Rings } from "react-loader-spinner";
+import axios from "axios";
 
 const MisReservas = ({ userId }) => {
   const [reservas, setReservas] = useState([]);
@@ -9,14 +10,16 @@ const MisReservas = ({ userId }) => {
   useEffect(() => {
     const fetchReservas = async () => {
       try {
-        const data = await getAppointments();
+        const response = await axios.get(
+          "http://localhost:5000/api/appointments"
+        );
 
-        if (!data || !Array.isArray(data.appointments)) {
+        if (!response.data || !Array.isArray(response.data)) {
           throw new Error("El formato del bin no es válido.");
         }
 
-        const userAppointments = data.appointments.filter(
-          (appointment) => appointment.userId === userId
+        const userAppointments = response.data.filter(
+          (appointment) => appointment.user_id === userId
         );
         setReservas(userAppointments);
       } catch (error) {
@@ -36,8 +39,8 @@ const MisReservas = ({ userId }) => {
     if (!confirmDelete) return;
 
     try {
-      await deleteAppointment(id); 
-      setReservas((prevReservas) => prevReservas.filter((r) => r.id !== id)); 
+      await deleteAppointment(id);
+      setReservas((prevReservas) => prevReservas.filter((r) => r.id !== id));
     } catch (error) {
       console.error("Error al eliminar la reserva:", error);
       alert("Hubo un error al intentar eliminar la reserva.");

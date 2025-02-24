@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { getAppointments, deleteAppointment } from "../../../api/jsonbinApi";
 import { Rings } from "react-loader-spinner";
+import axios from "axios";
 
-const GestionarReservas = ({userRole}) => {
+const GestionarReservas = ({ userRole }) => {
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchReservas = async () => {
       try {
-        const data = await getAppointments();
-
-        if (!data || !Array.isArray(data.appointments)) {
+        const response = await axios.get(
+          "http://localhost:5000/api/appointments"
+        );
+        if (
+          response.status !== 200 ||
+          !Array.isArray(response.data)
+        ) {
           throw new Error("El formato del bin no es válido.");
         }
-
-        setReservas(data.appointments);
+        setReservas(response.data);
       } catch (error) {
         console.error("Error al cargar las reservas:", error);
       } finally {
@@ -34,6 +37,7 @@ const GestionarReservas = ({userRole}) => {
     if (!confirmDelete) return;
 
     try {
+      await axios.post(`http://localhost:5000/api/delete-appointment/${id}`);
       await deleteAppointment(id);
       setReservas((prevReservas) => prevReservas.filter((r) => r.id !== id));
     } catch (error) {
@@ -84,7 +88,7 @@ const GestionarReservas = ({userRole}) => {
               <p className="font-semibold text-lg">Reserva ID: {reserva.id}</p>
               <p>
                 <span className="font-semibold">Usuario:</span>{" "}
-                {reserva.userId || "Sin usuario"}
+                {reserva.user_id || "Sin usuario"}
               </p>
               <p>
                 <span className="font-semibold">Fecha:</span> {reserva.date}

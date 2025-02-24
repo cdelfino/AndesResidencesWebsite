@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Toast from "@radix-ui/react-toast";
-import { v4 as uuidv4 } from "uuid"; 
-import {
-  getAppointments,
-  updateAppointments,
-  getProperties,
-} from "../../../api/jsonbinApi";
+import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AgendarRecorrido = ({ userId }) => {
   const [open, setOpen] = React.useState(false);
   const [propiedades, setPropiedades] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const data = await getProperties();
-        setPropiedades(data.properties);
-      } catch (error) {
-        console.error("Error al obtener las propiedades:", error);
+        const response = await fetch("http://localhost:5000/api/propiedades");
+        if (!response.ok) {
+          throw new Error("Error al obtener las propiedades");
+        }
+        const data = await response.json();
+        setPropiedades(data);
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
       }
     };
 
@@ -44,19 +46,21 @@ const AgendarRecorrido = ({ userId }) => {
           ...values,
         };
 
-        const existingAppointments = await getAppointments();
+        const response = await axios.get(
+          "http://localhost:5000/api/appointments"
+        );
 
-        const updatedAppointments = [
-          ...existingAppointments.appointments,
-          newAppointment,
-        ];
+        const updatedAppointments = [...response.data, newAppointment];
 
-        await updateAppointments({ appointments: updatedAppointments });
+        await axios.post("http://localhost:5000/api/update-appointment", {
+          appointment: newAppointment,
+        });
 
+        // await updateAppointments({ appointments: updatedAppointments });
 
         setOpen(true);
         setTimeout(() => {
-          navigate("/"); 
+          navigate("/");
         }, 3000);
       } catch (error) {
         console.error("Error al registrar el turno:", error);
@@ -142,6 +146,7 @@ const AgendarRecorrido = ({ userId }) => {
             </label>
             <input
               type="date"
+              min={new Date().toISOString().split("T")[0]}
               id="date"
               name="date"
               value={formik.values.date}
