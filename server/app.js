@@ -3,7 +3,6 @@ import mysql from "mysql2";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import "dotenv/config";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -177,6 +176,43 @@ app.post("/api/update-appointment", (req, res) => {
       res.json({ message: "Turno creado con éxito", appointmentId: id });
     }
   );
+});
+
+app.get("/api/appointments/:id", (req, res) => {
+  const { id } = req.params;
+  db.query("SELECT * FROM appointments WHERE id = ?", [id], (err, results) => {
+    if (err) {
+      return res.status(500).json({ error: "Error al obtener turno" });
+    }
+    res.json(results[0]);
+  });
+});
+
+app.put("/api/update-appointment/:id", (req, res) => {
+  const appointmentId = req.params.id;
+  const { userId, name, email, phone, date, message, propiedad } =
+    req.body.appointment;
+
+  const query = `
+    UPDATE appointments 
+    SET user_id = ?, name = ?, email = ?, phone = ?, date = ?, message = ?, propiedad = ?
+    WHERE id = ?
+  `;
+
+  db.query(
+    query,
+    [userId, name, email, phone, date, message, propiedad, appointmentId],
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: "Error al actualizar el turno" });
+      }
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: "Turno no encontrado" });
+      }
+      res.json({ message: "Turno actualizado con éxito" });
+    }
+  );
+  console.log("Turno actualizado:", req.body.appointment);
 });
 
 app.listen(port, () => {

@@ -13,6 +13,7 @@ import MisReservas from "./components/pages/MisReservas/MisReservas";
 import GestionarUsuarios from "./components/pages/GestionarUsuario/GestionarUsuarios";
 import GestionarReservas from "./components/pages/GestionarReservas/GestionarReservas";
 import axios from "axios";
+import EditarReserva from "./components/pages/GestionarReservas/EditarReserva";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -105,6 +106,12 @@ const App = () => {
               path="/publicarPropiedad"
               element={
                 <PublicarPropiedad userId={user?.id} userRole={user?.role} />
+              }
+            />
+            <Route
+              path="/editarReserva/:id"
+              element={
+                <EditarReserva userId={user?.id} userRole={user?.role} />
               }
             />
           </Routes>
