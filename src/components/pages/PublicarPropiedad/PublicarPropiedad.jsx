@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Toast from "@radix-ui/react-toast";
-import { v4 as uuidv4 } from "uuid"; 
-import {
-  getAppointments,
-  updateAppointments,
-  getProperties,
-} from "../../../api/jsonbinApi";
+import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 
 const PublicarPropiedad = ({ userId }) => {

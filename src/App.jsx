@@ -7,6 +7,7 @@ import Home from "./components/pages/Home/Home";
 import { Footer } from "./components/layout/Footer/Footer";
 import "./App.css";
 import AgendarRecorrido from "./components/pages/AgendarRecorrido/AgendarRecorrido";
+import PublicarPropiedad from "./components/pages/PublicarPropiedad/PublicarPropiedad";
 import PropertyDetail from "./components/pages/PropertyDetail/PropertyDetail";
 import MisReservas from "./components/pages/MisReservas/MisReservas";
 import GestionarUsuarios from "./components/pages/GestionarUsuario/GestionarUsuarios";
@@ -100,12 +101,6 @@ const App = () => {
               path="/gestionarReservas"
               element={
                 <GestionarReservas userId={user?.id} userRole={user?.role} />
-              }
-            />
-            <Route
-              path="/publicarPropiedad"
-              element={
-                <PublicarPropiedad userId={user?.id} userRole={user?.role} />
               }
             />
           </Routes>

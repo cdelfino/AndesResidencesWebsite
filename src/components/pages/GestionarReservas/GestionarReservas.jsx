@@ -12,10 +12,7 @@ const GestionarReservas = ({ userRole }) => {
         const response = await axios.get(
           "http://localhost:5000/api/appointments"
         );
-        if (
-          response.status !== 200 ||
-          !Array.isArray(response.data)
-        ) {
+        if (response.status !== 200 || !Array.isArray(response.data)) {
           throw new Error("El formato del bin no es válido.");
         }
         setReservas(response.data);
@@ -37,8 +34,7 @@ const GestionarReservas = ({ userRole }) => {
     if (!confirmDelete) return;
 
     try {
-      await axios.post(`http://localhost:5000/api/delete-appointment/${id}`);
-      await deleteAppointment(id);
+      await axios.delete(`http://localhost:5000/api/delete-appointment/${id}`);
       setReservas((prevReservas) => prevReservas.filter((r) => r.id !== id));
     } catch (error) {
       console.error("Error al eliminar la reserva:", error);
@@ -102,19 +98,12 @@ const GestionarReservas = ({ userRole }) => {
                 {reserva.message}
               </p>
             </div>
-            <div className="flex gap-3">
-              <button
-                className="bg-[#075985] text-white px-4 py-2 rounded hover:bg-red-700"
-              >
-                Editar reserva
-              </button>
-              <button
-                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                onClick={() => handleDelete(reserva.id)}
-              >
-                Eliminar
-              </button>
-            </div>
+            <button
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              onClick={() => handleDelete(reserva.id)}
+            >
+              Eliminar
+            </button>
           </li>
         ))}
       </ul>

@@ -166,7 +166,8 @@ app.get("/api/appointments", (req, res) => {
   });
 });
 
-app.delete(`http://localhost:5000/api/delete-appointment/${id}`, (req, res) => {
+app.delete("http://localhost:5000/api/delete-appointment/:id", (req, res) => {
+    const { id } = req.params;
   db.query("DELETE FROM appointments WHERE id = ?", [id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: "Error al eliminar turno" });

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { deleteAppointment } from "../../../api/jsonbinApi";
 import { Rings } from "react-loader-spinner";
 import axios from "axios";
 
@@ -39,7 +38,7 @@ const MisReservas = ({ userId }) => {
     if (!confirmDelete) return;
 
     try {
-      await deleteAppointment(id);
+      await axios.delete(`http://localhost:5000/api/delete-appointment/${id}`);
       setReservas((prevReservas) => prevReservas.filter((r) => r.id !== id));
     } catch (error) {
       console.error("Error al eliminar la reserva:", error);
@@ -99,18 +98,12 @@ const MisReservas = ({ userId }) => {
                 {reserva.message || "Sin mensaje adicional"}
               </p>
             </div>
-            <div className="flex gap-3">
-              <button
-                className="bg-[#075985] text-white px-4 py-2 rounded hover:bg-red-700"
-              >
-                Editar reserva
-              </button>
               <button
                 className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                 onClick={() => handleDelete(reserva.id)}
               >
                 Eliminar
-              </button></div>
+              </button>
           </li>
         ))}
       </ul>
