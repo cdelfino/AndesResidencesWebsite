@@ -3,19 +3,22 @@ import mysql from "mysql2";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(cors());
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "finaldelfino",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 });
+
+const jwtPassword = process.env.JWT_PASSWORD;
 
 db.connect((err) => {
   if (err) {
@@ -97,7 +100,8 @@ app.post("/api/login", (req, res) => {
 
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
-        "your_jwt_secret",
+
+        jwtPassword,
         {
           expiresIn: "1h",
         }
@@ -109,6 +113,7 @@ app.post("/api/login", (req, res) => {
 });
 
 app.get("/api/propiedades", (req, res) => {
+
   db.query("SELECT * FROM propiedades", (err, results) => {
     if (err) {
       return res.status(500).json({ error: "Error al obtener propiedades" });
@@ -149,7 +154,7 @@ app.get("/api/token", (req, res) => {
     return res.sendStatus(401);
   }
 
-  jwt.verify(token, "your_jwt_secret", (err, user) => {
+  jwt.verify(token, jwtPassword, (err, user) => {
     if (err) {
       return res.sendStatus(403);
     }
@@ -167,7 +172,7 @@ app.get("/api/appointments", (req, res) => {
 });
 
 app.delete("/api/delete-appointment/:id", (req, res) => {
-    const { id } = req.params;
+  const { id } = req.params;
   db.query("DELETE FROM appointments WHERE id = ?", [id], (err, results) => {
     if (err) {
       return res.status(500).json({ error: "Error al eliminar turno" });
