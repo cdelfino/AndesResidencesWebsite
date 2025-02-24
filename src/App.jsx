@@ -102,6 +102,12 @@ const App = () => {
                 <GestionarReservas userId={user?.id} userRole={user?.role} />
               }
             />
+            <Route
+              path="/publicarPropiedad"
+              element={
+                <PublicarPropiedad userId={user?.id} userRole={user?.role} />
+              }
+            />
           </Routes>
         </div>
         <Footer />

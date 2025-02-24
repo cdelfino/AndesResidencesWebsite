@@ -102,12 +102,19 @@ const GestionarReservas = ({ userRole }) => {
                 {reserva.message}
               </p>
             </div>
-            <button
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-              onClick={() => handleDelete(reserva.id)}
-            >
-              Eliminar
-            </button>
+            <div className="flex gap-3">
+              <button
+                className="bg-[#075985] text-white px-4 py-2 rounded hover:bg-red-700"
+              >
+                Editar reserva
+              </button>
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                onClick={() => handleDelete(reserva.id)}
+              >
+                Eliminar
+              </button>
+            </div>
           </li>
         ))}
       </ul>
