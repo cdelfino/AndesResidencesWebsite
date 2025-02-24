@@ -47,7 +47,6 @@ const PublicarPropiedad = ({ userId, userRole }) => {
           id: uuidv4(),
           ...values,
         };
-        console.log("Propiedad:", newProperty);
         const response = await axios.get(
           "http://localhost:5000/api/propiedades"
         );
@@ -57,7 +56,6 @@ const PublicarPropiedad = ({ userId, userRole }) => {
         await axios.post("http://localhost:5000/api/submit-property", {
           property: newProperty,
         });
-        console.log("Propiedad creada:", newProperty);
         setOpen(true);
         setTimeout(() => {
           navigate("/");

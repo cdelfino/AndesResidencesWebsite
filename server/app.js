@@ -3,6 +3,7 @@ import mysql from "mysql2";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -212,7 +213,6 @@ app.put("/api/update-appointment/:id", (req, res) => {
       res.json({ message: "Turno actualizado con éxito" });
     }
   );
-  console.log("Turno actualizado:", req.body.appointment);
 });
 
 app.listen(port, () => {

@@ -51,15 +51,13 @@ const EditarReserva = ({ userId }) => {
     },
     onSubmit: async (values) => {
       try {
+        const updatedValues = { ...values, userId: userId };
         const response = await axios.put(
           `http://localhost:5000/api/update-appointment/${id}`,
-          { appointment: values }
+          { appointment: updatedValues }
         );
-
-        console.log("Reserva actualizada:", response.data);
-
         setOpen(true);
-        setTimeout(() => navigate("/"), 3000);
+        setTimeout(() => navigate("/"), 2000);
       } catch (error) {
         console.error("Error al actualizar la reserva:", error);
       }
