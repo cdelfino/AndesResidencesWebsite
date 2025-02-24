@@ -234,8 +234,8 @@ const PublicarPropiedad = ({ userId, userRole }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             >
               <option value="" label="Seleccioná el tipo de propiedad" />
-              <option value="apartamento" label="Apartamento" />
-              <option value="casa" label="Casa" />
+              <option value="Apartamento" label="Apartamento" />
+              <option value="Casa" label="Casa" />
             </select>
           </div>
           <div className="flex flex-col">

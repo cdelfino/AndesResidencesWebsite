@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Rings } from "react-loader-spinner";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MisReservas = ({ userId }) => {
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchReservas = async () => {
@@ -98,12 +100,20 @@ const MisReservas = ({ userId }) => {
                 {reserva.message || "Sin mensaje adicional"}
               </p>
             </div>
+            <div className="flex gap-3">
+              <button
+                className="bg-[#075985] text-white px-4 py-2 rounded hover:bg-red-700"
+                onClick={() => navigate(`/editarReserva/${reserva.id}`)}
+              >
+                Editar reserva
+              </button>
               <button
                 className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                 onClick={() => handleDelete(reserva.id)}
               >
                 Eliminar
               </button>
+            </div>
           </li>
         ))}
       </ul>
