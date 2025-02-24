@@ -3,19 +3,26 @@ import { useFormik } from "formik";
 import * as Toast from "@radix-ui/react-toast";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const PublicarPropiedad = ({ userId }) => {
+const PublicarPropiedad = ({ userId, userRole }) => {
   const [open, setOpen] = React.useState(false);
   const [propiedades, setPropiedades] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const data = await getProperties();
-        setPropiedades(data.properties);
-      } catch (error) {
-        console.error("Error al obtener las propiedades:", error);
+        const response = await fetch("http://localhost:5000/api/propiedades");
+        if (!response.ok) {
+          throw new Error("Error al obtener las propiedades");
+        }
+        const data = await response.json();
+        setPropiedades(data);
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
       }
     };
 
@@ -24,46 +31,61 @@ const PublicarPropiedad = ({ userId }) => {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      email: "",
-      phone: "",
-      date: "",
-      message: "",
-      propiedad: "",
+      title: "",
+      location: "",
+      price: "",
+      size: "",
+      rooms: "",
+      bathrooms: "",
+      type: "",
+      photoUrl: "",
+      description: "",
     },
     onSubmit: async (values) => {
       try {
-        const newAppointment = {
+        const newProperty = {
           id: uuidv4(),
-          userId,
           ...values,
         };
+        console.log("Propiedad:", newProperty);
+        const response = await axios.get(
+          "http://localhost:5000/api/propiedades"
+        );
 
-        const existingAppointments = await getAppointments();
+        const updatedProperties = [...response.data, newProperty];
 
-        const updatedAppointments = [
-          ...existingAppointments.appointments,
-          newAppointment,
-        ];
-
-        await updateAppointments({ appointments: updatedAppointments });
-
-
+        await axios.post("http://localhost:5000/api/submit-property", {
+          property: newProperty,
+        });
+        console.log("Propiedad creada:", newProperty);
         setOpen(true);
         setTimeout(() => {
-          navigate("/"); 
+          navigate("/");
         }, 3000);
       } catch (error) {
-        console.error("Error al registrar el turno:", error);
+        console.error("Error al publicar la propiedad:", error);
       }
     },
   });
+
+  if (userRole !== "agente") {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="bg-red-600 text-white p-6 rounded-md">
+          <h2 className="text-xl font-semibold">No estás autorizado</h2>
+          <p className="mt-2">
+            Tu rol no tiene permisos para acceder a esta página.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!userId) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-center text-lg">
-          Por favor, inicia sesión para agendar un recorrido.
+          Por favor, inicia sesión para publicar una propiedad.
         </p>
       </div>
     );
@@ -71,7 +93,7 @@ const PublicarPropiedad = ({ userId }) => {
 
   return (
     <section className="bg-white rounded-lg border-slate-100 border-2 p-6 max-w-4xl mx-auto mt-8 mb-12">
-      <h2 className="text-2xl font-semibold mb-6">Agendar una Visita</h2>
+      <h2 className="text-2xl font-semibold mb-6">Publicar una propiedad</h2>
       <form onSubmit={formik.handleSubmit} className="space-y-4">
         <div className="flex flex-col space-y-4">
           <div className="flex flex-col">
@@ -79,14 +101,14 @@ const PublicarPropiedad = ({ userId }) => {
               htmlFor="name"
               className="text-sm font-semibold text-gray-700 mb-1"
             >
-              Tu Nombre
+              Título de la propiedad
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              placeholder="Tu Nombre"
-              value={formik.values.name}
+              id="title"
+              name="title"
+              placeholder="Ingresá el título de la propiedad"
+              value={formik.values.title}
               onChange={formik.handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -94,17 +116,17 @@ const PublicarPropiedad = ({ userId }) => {
           </div>
           <div className="flex flex-col">
             <label
-              htmlFor="email"
+              htmlFor="location"
               className="text-sm font-semibold text-gray-700 mb-1"
             >
-              Tu Email
+              Ubicación de la propiedad
             </label>
             <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Tu Email"
-              value={formik.values.email}
+              type="text"
+              id="location"
+              name="location"
+              placeholder="Ingresá la ubicación de la propiedad"
+              value={formik.values.location}
               onChange={formik.handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -112,17 +134,17 @@ const PublicarPropiedad = ({ userId }) => {
           </div>
           <div className="flex flex-col">
             <label
-              htmlFor="phone"
+              htmlFor="description"
               className="text-sm font-semibold text-gray-700 mb-1"
             >
-              Tu Teléfono
+              Descripción
             </label>
             <input
-              type="tel"
-              id="phone"
-              name="phone"
-              placeholder="Tu Teléfono"
-              value={formik.values.phone}
+              type="text"
+              id="description"
+              name="description"
+              placeholder="Ingresá una descripción"
+              value={formik.values.description}
               onChange={formik.handleChange}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -130,67 +152,117 @@ const PublicarPropiedad = ({ userId }) => {
           </div>
           <div className="flex flex-col">
             <label
-              htmlFor="date"
+              htmlFor="price"
               className="text-sm font-semibold text-gray-700 mb-1"
             >
-              Fecha de la Visita
+              Precio
             </label>
             <input
-              type="date"
-              id="date"
-              name="date"
+              type="number"
+              id="price"
+              name="price"
+              placeholder="Ingresá el precio"
+              value={formik.values.price}
+              onChange={formik.handleChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label
+              htmlFor="size"
+              className="text-sm font-semibold text-gray-700 mb-1"
+            >
+              Tamaño de la propiedad en m²
+            </label>
+            <input
+              type="number"
+              id="size"
+              name="size"
               value={formik.values.date}
               onChange={formik.handleChange}
+              placeholder="Ingresá el tamaño de la propiedad"
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
           </div>
           <div className="flex flex-col">
             <label
-              htmlFor="message"
+              htmlFor="rooms"
               className="text-sm font-semibold text-gray-700 mb-1"
             >
-              Información adicional
+              Habitaciones
             </label>
-            <textarea
-              id="message"
-              name="message"
-              placeholder="Información adicional"
-              value={formik.values.message}
+            <input
+              type="number"
+              id="rooms"
+              name="rooms"
+              placeholder="Ingresá la cantidad de habitaciones"
+              value={formik.values.rooms}
               onChange={formik.handleChange}
-              rows={4}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />
           </div>
           <div className="flex flex-col">
             <label
-              htmlFor="propiedad"
+              htmlFor="bathrooms"
               className="text-sm font-semibold text-gray-700 mb-1"
             >
-              Selecciona una propiedad
+              Baños
+            </label>
+            <input
+              type="number"
+              id="bathrooms"
+              name="bathrooms"
+              placeholder="Ingresá la cantidad de baños"
+              value={formik.values.bathrooms}
+              onChange={formik.handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label
+              htmlFor="type"
+              className="text-sm font-semibold text-gray-700 mb-1"
+            >
+              Tipo de propiedad
             </label>
             <select
-              id="propiedad"
-              name="propiedad"
-              value={formik.values.propiedad}
-              onChange={formik.handleChange}
+              id="type"
+              name="type"
               required
+              value={formik.values.type}
+              onChange={formik.handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             >
-              <option value="">Selecciona una propiedad</option>
-              {propiedades.map((prop) => (
-                <option key={prop.id} value={prop.title}>
-                  {prop.title}
-                </option>
-              ))}
+              <option value="" label="Seleccioná el tipo de propiedad" />
+              <option value="apartamento" label="Apartamento" />
+              <option value="casa" label="Casa" />
             </select>
+          </div>
+          <div className="flex flex-col">
+            <label
+              htmlFor="photoUrl"
+              className="text-sm font-semibold text-gray-700 mb-1"
+            >
+              Subí una foto de la propiedad
+            </label>
+            <input
+              type="text"
+              id="photoUrl"
+              name="photoUrl"
+              onChange={formik.handleChange}
+              value={formik.values.photoUrl}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              required
+            />
           </div>
         </div>
         <button
           type="submit"
           className="w-full bg-black text-white py-2 px-4 rounded-md font-semibold hover:bg-gray-800"
         >
-          Agendar Visita
+          Publicar Propiedad
         </button>
       </form>
 
@@ -201,10 +273,10 @@ const PublicarPropiedad = ({ userId }) => {
           onOpenChange={setOpen}
         >
           <Toast.Title className="font-medium text-gray-900">
-            Visita Agendada
+            Propiedad Publicada
           </Toast.Title>
           <Toast.Description className="mt-1 text-gray-500">
-            Nos pondremos en contacto contigo pronto para confirmar tu visita.
+            Tu propiedad se ha publicado correctamente.
           </Toast.Description>
         </Toast.Root>
         <Toast.Viewport className="fixed bottom-0 right-0 flex flex-col p-6 gap-2 w-96 max-w-[100vw] m-0 list-none z-50" />

@@ -113,13 +113,49 @@ app.post("/api/login", (req, res) => {
 });
 
 app.get("/api/propiedades", (req, res) => {
-
   db.query("SELECT * FROM propiedades", (err, results) => {
     if (err) {
       return res.status(500).json({ error: "Error al obtener propiedades" });
     }
     res.json(results);
   });
+});
+
+app.post("/api/submit-property", (req, res) => {
+  const {
+    id,
+    title,
+    location,
+    price,
+    size,
+    rooms,
+    bathrooms,
+    type,
+    photoUrl,
+    description,
+  } = req.body.property;
+
+  db.query(
+    "INSERT INTO propiedades (id, title, location, price, size, rooms, bathrooms, type, photoUrl, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [
+      id,
+      title,
+      location,
+      price,
+      size,
+      rooms,
+      bathrooms,
+      type,
+      photoUrl,
+      description,
+    ],
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: "Error al crear la propiedad" });
+      }
+      res.json({ message: "Propiedad creada con éxito", propertyId: id });
+    }
+  );
 });
 
 app.post("/api/update-appointment", (req, res) => {

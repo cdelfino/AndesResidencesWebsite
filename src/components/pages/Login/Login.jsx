@@ -37,7 +37,6 @@ const Login = ({ onLogin }) => {
 
         if (response.ok) {
           localStorage.setItem("token", data.token);
-          console.log(data);
           await onLogin(data);
           navigate("/");
         } else {

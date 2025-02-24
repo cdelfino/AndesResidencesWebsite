@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 const Navbar = ({ user, onLogout, setUser }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isAdmin = user?.role === "admin";
+  const isAgent = user?.role === "agente";
 
   return (
     <header className="border-b">
@@ -46,6 +47,16 @@ const Navbar = ({ user, onLogout, setUser }) => {
                 className="text-sm font-medium hover:underline"
               >
                 Gestionar Reservas
+              </Link>
+            </>
+          )}
+          {isAgent && (
+            <>
+              <Link
+                to="/publicarPropiedad"
+                className="text-sm font-medium hover:underline"
+              >
+                Publicar Propiedad
               </Link>
             </>
           )}

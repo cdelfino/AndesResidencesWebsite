@@ -54,7 +54,7 @@ const Register = () => {
             role: "cliente",
           }}
           validationSchema={validationSchema}
-          onSubmit={handleRegister} // Ahora pasamos la función handleRegister directamente
+          onSubmit={handleRegister}
         >
           <Form className="mt-8 space-y-6">
             <div className="rounded-md shadow-sm -space-y-px">

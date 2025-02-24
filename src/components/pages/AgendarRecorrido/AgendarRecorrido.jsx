@@ -55,9 +55,7 @@ const AgendarRecorrido = ({ userId }) => {
         await axios.post("http://localhost:5000/api/update-appointment", {
           appointment: newAppointment,
         });
-
-        // await updateAppointments({ appointments: updatedAppointments });
-
+        
         setOpen(true);
         setTimeout(() => {
           navigate("/");

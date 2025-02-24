@@ -22,7 +22,6 @@ const App = () => {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    console.log(storedUser);
     if (storedUser) {
       axios
         .get("http://localhost:5000/api/token", {
@@ -43,7 +42,6 @@ const App = () => {
         Authorization: `Bearer ${user.token}`,
       },
     });
-    console.log(response.data);
     setUser(response.data);
   };
 
@@ -101,6 +99,12 @@ const App = () => {
               path="/gestionarReservas"
               element={
                 <GestionarReservas userId={user?.id} userRole={user?.role} />
+              }
+            />
+            <Route
+              path="/publicarPropiedad"
+              element={
+                <PublicarPropiedad userId={user?.id} userRole={user?.role} />
               }
             />
           </Routes>

@@ -25,7 +25,6 @@ const GestionarReservas = ({ userRole }) => {
 
     fetchReservas();
   }, []);
-  console.log("Datos de reservas:", reservas);
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
